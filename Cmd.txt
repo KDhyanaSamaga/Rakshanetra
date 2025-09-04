@@ -1,0 +1,3 @@
+1. Use cd to locate YOLOV5
+2. Use pip install -r requirements.txt
+3.run the command to train !python /content/Rakshanetra/yolov5/train.py --img 640 --batch 16 --epochs 100 --data /content/Rakshanetra/yolov5/data/custom_data.yaml --weights yolov5s.pt
