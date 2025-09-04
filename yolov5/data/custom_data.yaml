@@ -1,0 +1,9 @@
+# Use a path relative to the yolov5 directory
+train: ../yolo_ready_dataset/train/images
+val: ../yolo_ready_dataset/val/images
+
+# number of classes
+nc: 3
+
+# class names
+names: ['elephant', 'leopard', 'wild_boar']

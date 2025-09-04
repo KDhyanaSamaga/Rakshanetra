@@ -1,0 +1,24 @@
+# Ignore virtual environments
+venv/
+yolov5_env/
+.env/
+
+# Ignore Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore large ML/AI model files
+*.dll
+*.lib
+*.so
+*.h5
+*.pt
+*.weights
+
+# Ignore data/logs
+*.log
+*.csv
+*.npy
+*.npz
