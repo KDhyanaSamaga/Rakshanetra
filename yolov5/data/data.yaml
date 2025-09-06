@@ -1,0 +1,9 @@
+# data.yaml
+train: yolo_ready_dataset/train/images
+val: yolo_ready_dataset/val/images
+
+# number of classes
+nc: 3
+
+# class names in the correct order (matching your class IDs 0, 1, 2)
+names: ['Elephant', 'Leopard', 'Wildboar']
