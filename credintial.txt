@@ -1,0 +1,7 @@
+TELEGRAM_BOT_TOKEN = "8450849961:AAFcZejoVCRaFIZ0GNSHWaV9f04MIt5A4RE"
+TELEGRAM_CHAT_ID = "6547885190"
+
+1. Open Anaconda Prompt
+2. Activate your environment : conda activate yolo_env
+3.Go to your project folder : cd /d D:\UI
+4.Run the app : python app.py

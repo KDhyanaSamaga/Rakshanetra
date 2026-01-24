@@ -82,12 +82,8 @@ def send_telegram_alert(detections, output_path):
     if not detections:
         return
 
-    # Allowed alert classes (case insensitive, include typo variants)
-    ALERT_CLASSES = {
-        "elephant",
-        "leopard", "leopord", "leapord",
-        "wildboar", "wild boar", "wild_bore", "wildbore", "wild bore"
-    }
+    # Allowed alert classes (case insensitive)
+    ALERT_CLASSES = {"elephant", "leopard", "wildboar", "wild boar", "wild_bore", "wildbore"}
 
     # Check if any detection belongs to alert classes
     alert_species = []
@@ -99,21 +95,17 @@ def send_telegram_alert(detections, output_path):
     if not alert_species:
         return  # No Elephant, No Leopard, No Wild Boar → No Telegram Alert
 
-    # Remove leading slash from URL/path to get local FS path
+    # Remove leading slash from URL/path
     file_path = output_path.lstrip("/")
 
     # Create caption
     caption = (
         "🚨 *Wildlife Alert Detected!* 🚨\n\n"
-        f"Detected: {', '.join(sorted(set(alert_species)))}\n"
+        f"Detected: {', '.join(alert_species)}\n"
         "Stay safe and alert!"
     )
 
     # Determine if it's image or video
-    files = None
-    data = None
-    telegram_url = None
-
     if file_path.lower().endswith((".jpg", ".jpeg", ".png")):
         telegram_url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendPhoto"
         files = {"photo": open(file_path, "rb")}
@@ -131,14 +123,7 @@ def send_telegram_alert(detections, output_path):
         requests.post(telegram_url, data=data, files=files)
     except Exception as e:
         print("Failed to send Telegram media:", e)
-    finally:
-        # Close file handle if opened
-        if files:
-            for f in files.values():
-                try:
-                    f.close()
-                except Exception:
-                    pass
+
 
 
 def draw_detections_on_image(image_bgr, result):
@@ -208,46 +193,32 @@ def run_inference_on_video(video_path, output_filename):
     """Run YOLO11 on every frame of a video and save annotated video."""
     cap = cv2.VideoCapture(video_path)
     if not cap.isOpened():
-        raise RuntimeError(f"Could not open uploaded video: {video_path}")
+        raise RuntimeError("Could not open uploaded video")
 
-    fps = cap.get(cv2.CAP_PROP_FPS)
-    if not fps or fps <= 0:
-        fps = 25  # fallback
-
+    fps = cap.get(cv2.CAP_PROP_FPS) or 25
     width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
     output_path = os.path.join(OUTPUT_FOLDER, output_filename)
     fourcc = cv2.VideoWriter_fourcc(*"mp4v")
-    writer = cv2.VideoWriter(output_path, fourcc, float(fps), (width, height))
+    writer = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
 
     all_detections = []
-    frame_idx = 0
 
     while True:
         ret, frame = cap.read()
         if not ret:
             break
 
-        frame_idx += 1
-
-        # Run YOLO on BGR frame
         result = model(frame, verbose=False)[0]
-
-        # Draw boxes
         detections, annotated_bgr = draw_detections_on_image(frame, result)
         all_detections.extend(detections)
-
-        # Ensure size matches writer
-        if annotated_bgr.shape[1] != width or annotated_bgr.shape[0] != height:
-            annotated_bgr = cv2.resize(annotated_bgr, (width, height))
-
         writer.write(annotated_bgr)
 
     cap.release()
     writer.release()
 
-    # De-duplicate detections
+    # De-duplicate detections a bit
     unique_detections = {}
     for det in all_detections:
         key = (det["class"], tuple(det["box"]))
@@ -291,7 +262,6 @@ def detect():
     detections = []
     output_rel_path = ""
     media_type = "image"
-    output_path = ""
 
     try:
         # From webcam snapshot
@@ -330,9 +300,8 @@ def detect():
         else:
             return jsonify({"status": "error", "message": "File type not allowed"}), 400
 
-        # Send Telegram if anything detected (uses local path, not URL)
-        if output_path:
-            send_telegram_alert(detections, output_path)
+        # Send Telegram if anything detected
+        send_telegram_alert(detections, output_rel_path)
 
         return jsonify(
             {
