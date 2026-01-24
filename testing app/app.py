@@ -26,8 +26,7 @@ ALLOWED_VIDEO_EXTENSIONS = {"mp4", "avi", "mov", "mkv"}
 TELEGRAM_BOT_TOKEN = ""
 TELEGRAM_CHAT_ID = ""
 
-#TELEGRAM_BOT_TOKEN = "8007824138:AAF2KQNqwplfzuac8kqHmSjM_nhRk1egKYU"
-#TELEGRAM_CHAT_ID  = "6360921508"
+
 
 app = Flask(__name__, static_folder="static", template_folder="templates")
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
