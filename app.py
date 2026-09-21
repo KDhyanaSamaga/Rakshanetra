@@ -23,8 +23,8 @@ ALLOWED_IMAGE_EXTENSIONS = {"png", "jpg", "jpeg"}
 ALLOWED_VIDEO_EXTENSIONS = {"mp4", "avi", "mov", "mkv"}
 
 # Your Telegram details
-TELEGRAM_BOT_TOKEN = ""
-TELEGRAM_CHAT_ID = ""
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
 
 app = Flask(__name__, static_folder="static", template_folder="templates")
