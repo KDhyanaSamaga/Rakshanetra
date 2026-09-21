@@ -7,6 +7,7 @@ from flask import Flask, render_template, request, jsonify
 from ultralytics import YOLO
 import cv2
 import os
+from dotenv import load_env
 import numpy as np
 import base64
 import time
@@ -16,6 +17,8 @@ from werkzeug.utils import secure_filename
 # ==========================
 # CONFIGURATION
 # ==========================
+
+load_env()
 
 UPLOAD_FOLDER = "uploads"
 OUTPUT_FOLDER = os.path.join("static", "outputs")
